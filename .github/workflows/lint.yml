@@ -11,6 +11,10 @@ jobs:
   golangci:
     name: Run golangci-lint
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: "github.com/bocha-io/*"
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     timeout-minutes: 10
     steps:
       - uses: actions/setup-go@v4
@@ -24,6 +28,7 @@ jobs:
             **/**.go
             go.mod
             go.sum
+      - run: git config --global url.https://$GITHUB_TOKEN:x-oauth-basic@github.com/.insteadOf https://github.com/
       - uses: golangci/golangci-lint-action@v3.4.0
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
