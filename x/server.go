@@ -16,12 +16,12 @@ import (
 func StartGorillaServer(
 	port int,
 	mudDatabase *data.Database,
-	HandleMessage func(g *messages.Connection, ws *messages.WebSocketContainer, m messages.BasicMessage, p []byte) error,
+	handleMessage func(g *messages.Connection, ws *messages.WebSocketContainer, m messages.BasicMessage, p []byte) error,
 ) error {
 	logger.LogInfo(fmt.Sprintf("[backend] starting server at port: %d\n", port))
 	router := mux.NewRouter()
 
-	g := messages.NewConnection(mudDatabase)
+	g := messages.NewConnection(mudDatabase, handleMessage)
 	router.HandleFunc("/ws", g.WebSocketConnectionHandler).Methods("GET", "OPTIONS")
 	api.PingRoute(router)
 

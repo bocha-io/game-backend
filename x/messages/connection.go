@@ -42,8 +42,7 @@ type Connection struct {
 
 func NewConnection(
 	database *data.Database,
-	HandleMessage func(g *Connection, ws *WebSocketContainer, m BasicMessage, p []byte) error,
-
+	handleMessage func(g *Connection, ws *WebSocketContainer, m BasicMessage, p []byte) error,
 ) Connection {
 	return Connection{
 		done:              make(chan struct{}),
@@ -51,6 +50,7 @@ func NewConnection(
 		WsSockets:         make(map[string]*WebSocketContainer),
 		Database:          database,
 		LastBroadcastTime: time.Now(),
+		HandleMessage:     handleMessage,
 	}
 }
 
@@ -99,9 +99,13 @@ func (g *Connection) WsHandler(ws *WebSocketContainer) {
 		var m BasicMessage
 		err = json.Unmarshal(p, &m)
 		if err != nil {
+			logger.LogInfo("[backend] closing connection because the msg is not a basic message")
 			return
 		}
 
-		g.HandleMessage(g, ws, m, p)
+		if err := g.HandleMessage(g, ws, m, p); err != nil {
+			logger.LogInfo(fmt.Sprintf("[backend] closing connection error in the handle message function: %s", err.Error()))
+			return
+		}
 	}
 }
