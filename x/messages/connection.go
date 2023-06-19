@@ -80,6 +80,14 @@ func WriteMessage(ws *websocket.Conn, msg *string) error {
 	return ws.WriteMessage(websocket.TextMessage, []byte(*msg))
 }
 
+func WriteJSON(ws *websocket.Conn, msg interface{}) error {
+	value, err := json.Marshal(msg)
+	if err != nil {
+		return err
+	}
+	return ws.WriteMessage(websocket.TextMessage, value)
+}
+
 func RemoveConnection(ws *WebSocketContainer, g *Connection) {
 	ws.Conn.Close()
 	delete(g.WsSockets, ws.User)
