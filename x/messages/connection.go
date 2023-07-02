@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/bocha-io/game-backend/x/cors"
@@ -23,6 +24,7 @@ type WebSocketContainer struct {
 	WalletID      int
 	WalletAddress string
 	Conn          *websocket.Conn
+	ConnMutex     *sync.Mutex
 }
 
 type Connection struct {
@@ -71,16 +73,25 @@ func (g *Connection) WebSocketConnectionHandler(response http.ResponseWriter, re
 	webSocket := WebSocketContainer{
 		Authenticated: false,
 		Conn:          ws,
+		ConnMutex:     &sync.Mutex{},
 	}
 
 	g.WsHandler(&webSocket)
 }
 
-func WriteMessage(ws *websocket.Conn, msg *string) error {
+// Probably make this function part of the WebSocketContainer to ignore the first 2 params
+func WriteMessage(ws *websocket.Conn, wsMutex *sync.Mutex, msg *string) error {
+	wsMutex.Lock()
+	defer wsMutex.Unlock()
+
 	return ws.WriteMessage(websocket.TextMessage, []byte(*msg))
 }
 
-func WriteJSON(ws *websocket.Conn, msg interface{}) error {
+// Probably make this function part of the WebSocketContainer to ignore the first 2 params
+func WriteJSON(ws *websocket.Conn, wsMutex *sync.Mutex, msg interface{}) error {
+	wsMutex.Lock()
+	defer wsMutex.Unlock()
+
 	value, err := json.Marshal(msg)
 	if err != nil {
 		return err
