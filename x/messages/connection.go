@@ -100,13 +100,14 @@ func WriteJSON(ws *websocket.Conn, wsMutex *sync.Mutex, msg interface{}) error {
 }
 
 func RemoveConnection(ws *WebSocketContainer, g *Connection) {
+	// TODO: this should inform that the connection is closed so we do not broadcast to this client
 	ws.Conn.Close()
 	delete(g.WsSockets, ws.User)
 }
 
 func (g *Connection) WsHandler(ws *WebSocketContainer) {
+	defer RemoveConnection(ws, g)
 	for {
-		defer RemoveConnection(ws, g)
 		// Read until error the client messages
 		_, p, err := ws.Conn.ReadMessage()
 		if err != nil {
