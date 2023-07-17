@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOPRIVATE: "github.com/bocha-io/*"
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
     timeout-minutes: 10
     steps:
