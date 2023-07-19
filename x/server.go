@@ -13,15 +13,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func StartGorillaServer(
+func NewGorillaServer(
 	port int,
 	mudDatabase *data.Database,
-	handleMessage func(g *messages.Connection, ws *messages.WebSocketContainer, m messages.BasicMessage, p []byte) error,
-) error {
+	handleMessage func(g *messages.Server, ws *messages.WebSocketContainer, m messages.BasicMessage, p []byte) error,
+) (*messages.Server, *http.Server) {
 	logger.LogInfo(fmt.Sprintf("[backend] starting server at port: %d\n", port))
 	router := mux.NewRouter()
 
-	g := messages.NewConnection(mudDatabase, handleMessage)
+	g := messages.NewServer(mudDatabase, handleMessage)
 	router.HandleFunc("/ws", g.WebSocketConnectionHandler).Methods("GET", "OPTIONS")
 	api.PingRoute(router)
 
@@ -32,5 +32,14 @@ func StartGorillaServer(
 		Handler:           router,
 		ReadHeaderTimeout: 3 * time.Second,
 	}
+	return g, server
+}
+
+func StartGorillaServer(
+	port int,
+	mudDatabase *data.Database,
+	handleMessage func(g *messages.Server, ws *messages.WebSocketContainer, m messages.BasicMessage, p []byte) error,
+) error {
+	_, server := NewGorillaServer(port, mudDatabase, handleMessage)
 	return server.ListenAndServe()
 }

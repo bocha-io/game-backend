@@ -27,13 +27,13 @@ type WebSocketContainer struct {
 	ConnMutex     *sync.Mutex
 }
 
-type Connection struct {
+type Server struct {
 	done              chan (struct{})
 	WalletIndex       map[string]string
 	WsSockets         map[string]*WebSocketContainer
 	Database          *data.Database
 	LastBroadcastTime time.Time
-	HandleMessage     func(g *Connection, ws *WebSocketContainer, m BasicMessage, p []byte) error
+	HandleMessage     func(g *Server, ws *WebSocketContainer, m BasicMessage, p []byte) error
 }
 
 // NOTE: your connect msg should set the web socket container values
@@ -42,11 +42,11 @@ type Connection struct {
 // ws.WalletID = user.Index
 // ws.WalletAddress = strings.ToLower(user.Address)
 
-func NewConnection(
+func NewServer(
 	database *data.Database,
-	handleMessage func(g *Connection, ws *WebSocketContainer, m BasicMessage, p []byte) error,
-) Connection {
-	return Connection{
+	handleMessage func(g *Server, ws *WebSocketContainer, m BasicMessage, p []byte) error,
+) *Server {
+	return &Server{
 		done:              make(chan struct{}),
 		WalletIndex:       make(map[string]string),
 		WsSockets:         make(map[string]*WebSocketContainer),
@@ -56,7 +56,7 @@ func NewConnection(
 	}
 }
 
-func (g *Connection) WebSocketConnectionHandler(response http.ResponseWriter, request *http.Request) {
+func (g *Server) WebSocketConnectionHandler(response http.ResponseWriter, request *http.Request) {
 	if cors.SetHandlerCorsForOptions(request, &response) {
 		return
 	}
@@ -99,13 +99,13 @@ func WriteJSON(ws *websocket.Conn, wsMutex *sync.Mutex, msg interface{}) error {
 	return ws.WriteMessage(websocket.TextMessage, value)
 }
 
-func RemoveConnection(ws *WebSocketContainer, g *Connection) {
+func RemoveConnection(ws *WebSocketContainer, g *Server) {
 	// TODO: this should inform that the connection is closed so we do not broadcast to this client
 	ws.Conn.Close()
 	delete(g.WsSockets, ws.User)
 }
 
-func (g *Connection) WsHandler(ws *WebSocketContainer) {
+func (g *Server) WsHandler(ws *WebSocketContainer) {
 	defer RemoveConnection(ws, g)
 	for {
 		// Read until error the client messages
