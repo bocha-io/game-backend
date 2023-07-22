@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/bocha-io/garnet v0.0.0-20230618205734-e411ebd0c8ea
+	github.com/bocha-io/logger v0.0.0-20230722133508-fbef5d720b58
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 )

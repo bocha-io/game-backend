@@ -9,7 +9,7 @@ import (
 	"github.com/bocha-io/game-backend/x/cors"
 	"github.com/bocha-io/game-backend/x/messages"
 	"github.com/bocha-io/garnet/x/indexer/data"
-	"github.com/bocha-io/garnet/x/logger"
+	"github.com/bocha-io/logger"
 	"github.com/gorilla/mux"
 )
 
