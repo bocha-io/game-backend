@@ -6,6 +6,8 @@ github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLj
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/bocha-io/garnet v0.0.0-20230618205734-e411ebd0c8ea h1:Rl6lkj7YpZ2n7D5iRVlbX8saH5STxQ137VAA59P1u0g=
 github.com/bocha-io/garnet v0.0.0-20230618205734-e411ebd0c8ea/go.mod h1:jgmUJG/g7AaWT2xR6TJl7k//38oWYn/kWnUrl3jyp4s=
+github.com/bocha-io/logger v0.0.0-20230722133508-fbef5d720b58 h1:YolHxRI5xP1OMz8fpFRxcemc1SUqCIgOoydzx1Ued5w=
+github.com/bocha-io/logger v0.0.0-20230722133508-fbef5d720b58/go.mod h1:Olzi9RTqkwp2lz8cNFGW7gAZh8PNk+HJ8bw8BDqpMmY=
 github.com/btcsuite/btcd v0.22.1 h1:CnwP9LM/M9xuRrGSCGeMVs9iv09uMqwsVX7EeIpgV2c=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0 h1:fzn1qaOt32TuLjFlkzYSsBC35Q3KUjT1SwPxiMSCF5k=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0/go.mod h1:U7MHm051Al6XmscBQ0BoNydpOTsFAn707034b5nY8zU=
