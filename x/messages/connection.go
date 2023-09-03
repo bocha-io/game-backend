@@ -34,6 +34,7 @@ type Server struct {
 	Database          *data.Database
 	LastBroadcastTime time.Time
 	HandleMessage     func(g *Server, ws *WebSocketContainer, m BasicMessage, p []byte) error
+	HandleDisconnect  func(ws *WebSocketContainer)
 }
 
 // NOTE: your connect msg should set the web socket container values
@@ -45,6 +46,7 @@ type Server struct {
 func NewServer(
 	database *data.Database,
 	handleMessage func(g *Server, ws *WebSocketContainer, m BasicMessage, p []byte) error,
+	handleDisconnect func(ws *WebSocketContainer),
 ) *Server {
 	return &Server{
 		done:              make(chan struct{}),
@@ -52,7 +54,9 @@ func NewServer(
 		WsSockets:         make(map[string]*WebSocketContainer),
 		Database:          database,
 		LastBroadcastTime: time.Now(),
-		HandleMessage:     handleMessage,
+
+		HandleMessage:    handleMessage,
+		HandleDisconnect: handleDisconnect,
 	}
 }
 
@@ -101,6 +105,7 @@ func WriteJSON(ws *websocket.Conn, wsMutex *sync.Mutex, msg interface{}) error {
 
 func RemoveConnection(ws *WebSocketContainer, g *Server) {
 	// TODO: this should inform that the connection is closed so we do not broadcast to this client
+	g.HandleDisconnect(ws)
 	ws.Conn.Close()
 	delete(g.WsSockets, ws.User)
 }
